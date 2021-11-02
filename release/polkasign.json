@@ -1,0 +1,1160 @@
+{
+  "metadataVersion": "0.1.0",
+  "source": {
+    "hash": "0xa00f94828aebefb421b1180ffe372e0fd5fbdc90bc7348c1ad4a0819910f1dfe",
+    "language": "ink! 3.0.0-rc4",
+    "compiler": "rustc 1.57.0-nightly"
+  },
+  "contract": {
+    "name": "polkasign",
+    "version": "0.1.0",
+    "authors": [
+      "[your_name] <[your_email]>"
+    ]
+  },
+  "spec": {
+    "constructors": [
+      {
+        "args": [
+          {
+            "name": "owner",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          }
+        ],
+        "docs": [],
+        "name": [
+          "new"
+        ],
+        "selector": "0x9bae9d5e"
+      }
+    ],
+    "docs": [],
+    "events": [],
+    "messages": [
+      {
+        "args": [
+          {
+            "name": "params",
+            "type": {
+              "displayName": [
+                "CreateAgreementParams"
+              ],
+              "type": 30
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "create_agreement"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "u64"
+          ],
+          "type": 4
+        },
+        "selector": "0xd8e30f96"
+      },
+      {
+        "args": [
+          {
+            "name": "params",
+            "type": {
+              "displayName": [
+                "CreateAgreementParams"
+              ],
+              "type": 30
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 17
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "create_agreement_with_sign"
+        ],
+        "payable": false,
+        "returnType": null,
+        "selector": "0xd8f3bfc8"
+      },
+      {
+        "args": [
+          {
+            "name": "index",
+            "type": {
+              "displayName": [
+                "u64"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "name": "info",
+            "type": {
+              "displayName": [
+                "StorageInfo"
+              ],
+              "type": 13
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "attach_resource_to_agreement"
+        ],
+        "payable": false,
+        "returnType": null,
+        "selector": "0xc87c4f55"
+      },
+      {
+        "args": [
+          {
+            "name": "index",
+            "type": {
+              "displayName": [
+                "u64"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "name": "info",
+            "type": {
+              "displayName": [
+                "StorageInfo"
+              ],
+              "type": 13
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 17
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "attach_resource_with_sign"
+        ],
+        "payable": false,
+        "returnType": null,
+        "selector": "0x2edf500f"
+      },
+      {
+        "args": [
+          {
+            "name": "msg",
+            "type": {
+              "displayName": [],
+              "type": 2
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 17
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "check_sign"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "bool"
+          ],
+          "type": 31
+        },
+        "selector": "0x5f8c8c05"
+      },
+      {
+        "args": [
+          {
+            "name": "creator",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "name": "pageParams",
+            "type": {
+              "displayName": [
+                "PageParams"
+              ],
+              "type": 32
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "query_agreement_by_creator"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "PageResult"
+          ],
+          "type": 33
+        },
+        "selector": "0x9fd68cb5"
+      },
+      {
+        "args": [
+          {
+            "name": "index",
+            "type": {
+              "displayName": [
+                "u64"
+              ],
+              "type": 4
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "query_agreement_by_id"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "AgreementInfo"
+          ],
+          "type": 10
+        },
+        "selector": "0xd57deacb"
+      },
+      {
+        "args": [
+          {
+            "name": "collaborator",
+            "type": {
+              "displayName": [
+                "AccountId"
+              ],
+              "type": 1
+            }
+          },
+          {
+            "name": "pageParams",
+            "type": {
+              "displayName": [
+                "PageParams"
+              ],
+              "type": 32
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "query_agreement_by_collaborator"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "PageResult"
+          ],
+          "type": 33
+        },
+        "selector": "0x6117ae13"
+      }
+    ]
+  },
+  "storage": {
+    "struct": {
+      "fields": [
+        {
+          "layout": {
+            "cell": {
+              "key": "0x0000000000000000000000000000000000000000000000000000000000000000",
+              "ty": 1
+            }
+          },
+          "name": "owner"
+        },
+        {
+          "layout": {
+            "cell": {
+              "key": "0x0100000000000000000000000000000000000000000000000000000000000000",
+              "ty": 4
+            }
+          },
+          "name": "index"
+        },
+        {
+          "layout": {
+            "struct": {
+              "fields": [
+                {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "cell": {
+                              "key": "0x0200000000000000000000000000000000000000000000000000000000000000",
+                              "ty": 5
+                            }
+                          },
+                          "name": "header"
+                        },
+                        {
+                          "layout": {
+                            "struct": {
+                              "fields": [
+                                {
+                                  "layout": {
+                                    "cell": {
+                                      "key": "0x0300000000000000000000000000000000000000000000000000000000000000",
+                                      "ty": 6
+                                    }
+                                  },
+                                  "name": "len"
+                                },
+                                {
+                                  "layout": {
+                                    "array": {
+                                      "cellsPerElem": 1,
+                                      "layout": {
+                                        "cell": {
+                                          "key": "0x0300000001000000000000000000000000000000000000000000000000000000",
+                                          "ty": 7
+                                        }
+                                      },
+                                      "len": 4294967295,
+                                      "offset": "0x0400000000000000000000000000000000000000000000000000000000000000"
+                                    }
+                                  },
+                                  "name": "elems"
+                                }
+                              ]
+                            }
+                          },
+                          "name": "entries"
+                        }
+                      ]
+                    }
+                  },
+                  "name": "keys"
+                },
+                {
+                  "layout": {
+                    "hash": {
+                      "layout": {
+                        "cell": {
+                          "key": "0x0400000001000000000000000000000000000000000000000000000000000000",
+                          "ty": 9
+                        }
+                      },
+                      "offset": "0x0300000001000000000000000000000000000000000000000000000000000000",
+                      "strategy": {
+                        "hasher": "Blake2x256",
+                        "postfix": "",
+                        "prefix": "0x696e6b20686173686d6170"
+                      }
+                    }
+                  },
+                  "name": "values"
+                }
+              ]
+            }
+          },
+          "name": "agreements_map"
+        },
+        {
+          "layout": {
+            "struct": {
+              "fields": [
+                {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "cell": {
+                              "key": "0x0400000001000000000000000000000000000000000000000000000000000000",
+                              "ty": 5
+                            }
+                          },
+                          "name": "header"
+                        },
+                        {
+                          "layout": {
+                            "struct": {
+                              "fields": [
+                                {
+                                  "layout": {
+                                    "cell": {
+                                      "key": "0x0500000001000000000000000000000000000000000000000000000000000000",
+                                      "ty": 6
+                                    }
+                                  },
+                                  "name": "len"
+                                },
+                                {
+                                  "layout": {
+                                    "array": {
+                                      "cellsPerElem": 1,
+                                      "layout": {
+                                        "cell": {
+                                          "key": "0x0500000002000000000000000000000000000000000000000000000000000000",
+                                          "ty": 27
+                                        }
+                                      },
+                                      "len": 4294967295,
+                                      "offset": "0x0600000001000000000000000000000000000000000000000000000000000000"
+                                    }
+                                  },
+                                  "name": "elems"
+                                }
+                              ]
+                            }
+                          },
+                          "name": "entries"
+                        }
+                      ]
+                    }
+                  },
+                  "name": "keys"
+                },
+                {
+                  "layout": {
+                    "hash": {
+                      "layout": {
+                        "cell": {
+                          "key": "0x0600000002000000000000000000000000000000000000000000000000000000",
+                          "ty": 28
+                        }
+                      },
+                      "offset": "0x0500000002000000000000000000000000000000000000000000000000000000",
+                      "strategy": {
+                        "hasher": "Blake2x256",
+                        "postfix": "",
+                        "prefix": "0x696e6b20686173686d6170"
+                      }
+                    }
+                  },
+                  "name": "values"
+                }
+              ]
+            }
+          },
+          "name": "agreements_creator_map"
+        },
+        {
+          "layout": {
+            "struct": {
+              "fields": [
+                {
+                  "layout": {
+                    "struct": {
+                      "fields": [
+                        {
+                          "layout": {
+                            "cell": {
+                              "key": "0x0600000002000000000000000000000000000000000000000000000000000000",
+                              "ty": 5
+                            }
+                          },
+                          "name": "header"
+                        },
+                        {
+                          "layout": {
+                            "struct": {
+                              "fields": [
+                                {
+                                  "layout": {
+                                    "cell": {
+                                      "key": "0x0700000002000000000000000000000000000000000000000000000000000000",
+                                      "ty": 6
+                                    }
+                                  },
+                                  "name": "len"
+                                },
+                                {
+                                  "layout": {
+                                    "array": {
+                                      "cellsPerElem": 1,
+                                      "layout": {
+                                        "cell": {
+                                          "key": "0x0700000003000000000000000000000000000000000000000000000000000000",
+                                          "ty": 27
+                                        }
+                                      },
+                                      "len": 4294967295,
+                                      "offset": "0x0800000002000000000000000000000000000000000000000000000000000000"
+                                    }
+                                  },
+                                  "name": "elems"
+                                }
+                              ]
+                            }
+                          },
+                          "name": "entries"
+                        }
+                      ]
+                    }
+                  },
+                  "name": "keys"
+                },
+                {
+                  "layout": {
+                    "hash": {
+                      "layout": {
+                        "cell": {
+                          "key": "0x0800000003000000000000000000000000000000000000000000000000000000",
+                          "ty": 28
+                        }
+                      },
+                      "offset": "0x0700000003000000000000000000000000000000000000000000000000000000",
+                      "strategy": {
+                        "hasher": "Blake2x256",
+                        "postfix": "",
+                        "prefix": "0x696e6b20686173686d6170"
+                      }
+                    }
+                  },
+                  "name": "values"
+                }
+              ]
+            }
+          },
+          "name": "agreements_collaborator_map"
+        }
+      ]
+    }
+  },
+  "types": [
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "type": 2,
+              "typeName": "[u8; 32]"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_env",
+        "types",
+        "AccountId"
+      ]
+    },
+    {
+      "def": {
+        "array": {
+          "len": 32,
+          "type": 3
+        }
+      }
+    },
+    {
+      "def": {
+        "primitive": "u8"
+      }
+    },
+    {
+      "def": {
+        "primitive": "u64"
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "last_vacant",
+              "type": 6,
+              "typeName": "Index"
+            },
+            {
+              "name": "len",
+              "type": 6,
+              "typeName": "u32"
+            },
+            {
+              "name": "len_entries",
+              "type": 6,
+              "typeName": "u32"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "Header"
+      ]
+    },
+    {
+      "def": {
+        "primitive": "u32"
+      }
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 8,
+                  "typeName": "VacantEntry"
+                }
+              ],
+              "name": "Vacant"
+            },
+            {
+              "fields": [
+                {
+                  "type": 4,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Occupied"
+            }
+          ]
+        }
+      },
+      "params": [
+        4
+      ],
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "Entry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "next",
+              "type": 6,
+              "typeName": "Index"
+            },
+            {
+              "name": "prev",
+              "type": 6,
+              "typeName": "Index"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "VacantEntry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "value",
+              "type": 10,
+              "typeName": "V"
+            },
+            {
+              "name": "key_index",
+              "type": 6,
+              "typeName": "KeyIndex"
+            }
+          ]
+        }
+      },
+      "params": [
+        10
+      ],
+      "path": [
+        "ink_storage",
+        "collections",
+        "hashmap",
+        "ValueEntry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "index",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "creator",
+              "type": 1,
+              "typeName": "AccountId"
+            },
+            {
+              "name": "name",
+              "type": 11,
+              "typeName": "String"
+            },
+            {
+              "name": "create_at",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "status",
+              "type": 3,
+              "typeName": "u8"
+            },
+            {
+              "name": "signers",
+              "type": 12,
+              "typeName": "Vec<AccountId>"
+            },
+            {
+              "name": "agreement_file",
+              "type": 13,
+              "typeName": "StorageInfo"
+            },
+            {
+              "name": "signs",
+              "type": 15,
+              "typeName": "BTreeMap<AccountId,[u8; 64]>"
+            },
+            {
+              "name": "sign_infos",
+              "type": 19,
+              "typeName": "BTreeMap<AccountId, SignInfo>"
+            },
+            {
+              "name": "resources",
+              "type": 23,
+              "typeName": "BTreeMap<AccountId, Vec<StorageInfo>>"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "polkasion",
+        "AgreementInfo"
+      ]
+    },
+    {
+      "def": {
+        "primitive": "str"
+      }
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 1
+        }
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "hash",
+              "type": 14,
+              "typeName": "Hash"
+            },
+            {
+              "name": "creator",
+              "type": 1,
+              "typeName": "AccountId"
+            },
+            {
+              "name": "usage",
+              "type": 11,
+              "typeName": "String"
+            },
+            {
+              "name": "save_at",
+              "type": 11,
+              "typeName": "String"
+            },
+            {
+              "name": "url",
+              "type": 11,
+              "typeName": "String"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "polkasion",
+        "StorageInfo"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "type": 2,
+              "typeName": "[u8; 32]"
+            }
+          ]
+        }
+      },
+      "path": [
+        "ink_env",
+        "types",
+        "Hash"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "type": 18,
+              "typeName": "[(K, V)]"
+            }
+          ]
+        }
+      },
+      "params": [
+        16
+      ],
+      "path": [
+        "BTreeMap"
+      ]
+    },
+    {
+      "def": {
+        "tuple": [
+          1,
+          17
+        ]
+      }
+    },
+    {
+      "def": {
+        "array": {
+          "len": 64,
+          "type": 3
+        }
+      }
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 16
+        }
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "type": 22,
+              "typeName": "[(K, V)]"
+            }
+          ]
+        }
+      },
+      "params": [
+        20
+      ],
+      "path": [
+        "BTreeMap"
+      ]
+    },
+    {
+      "def": {
+        "tuple": [
+          1,
+          21
+        ]
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "addr",
+              "type": 1,
+              "typeName": "AccountId"
+            },
+            {
+              "name": "create_at",
+              "type": 4,
+              "typeName": "u64"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "polkasion",
+        "SignInfo"
+      ]
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 20
+        }
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "type": 26,
+              "typeName": "[(K, V)]"
+            }
+          ]
+        }
+      },
+      "params": [
+        24
+      ],
+      "path": [
+        "BTreeMap"
+      ]
+    },
+    {
+      "def": {
+        "tuple": [
+          1,
+          25
+        ]
+      }
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 13
+        }
+      }
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 24
+        }
+      }
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 8,
+                  "typeName": "VacantEntry"
+                }
+              ],
+              "name": "Vacant"
+            },
+            {
+              "fields": [
+                {
+                  "type": 1,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Occupied"
+            }
+          ]
+        }
+      },
+      "params": [
+        1
+      ],
+      "path": [
+        "ink_storage",
+        "collections",
+        "stash",
+        "Entry"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "value",
+              "type": 29,
+              "typeName": "V"
+            },
+            {
+              "name": "key_index",
+              "type": 6,
+              "typeName": "KeyIndex"
+            }
+          ]
+        }
+      },
+      "params": [
+        29
+      ],
+      "path": [
+        "ink_storage",
+        "collections",
+        "hashmap",
+        "ValueEntry"
+      ]
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 4
+        }
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "name",
+              "type": 11,
+              "typeName": "String"
+            },
+            {
+              "name": "signers",
+              "type": 12,
+              "typeName": "Vec<AccountId>"
+            },
+            {
+              "name": "agreement_file",
+              "type": 13,
+              "typeName": "StorageInfo"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "polkasion",
+        "CreateAgreementParams"
+      ]
+    },
+    {
+      "def": {
+        "primitive": "bool"
+      }
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "page_index",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "page_size",
+              "type": 4,
+              "typeName": "u64"
+            }
+          ]
+        }
+      },
+      "path": [
+        "page_helper",
+        "page_helper",
+        "PageParams"
+      ]
+    },
+    {
+      "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "success",
+              "type": 31,
+              "typeName": "bool"
+            },
+            {
+              "name": "err",
+              "type": 11,
+              "typeName": "String"
+            },
+            {
+              "name": "total",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "pages",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "page_index",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "page_size",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "data",
+              "type": 34,
+              "typeName": "Vec<T>"
+            }
+          ]
+        }
+      },
+      "params": [
+        10
+      ],
+      "path": [
+        "page_helper",
+        "page_helper",
+        "PageResult"
+      ]
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 10
+        }
+      }
+    }
+  ]
+}
