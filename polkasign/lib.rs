@@ -123,9 +123,6 @@ mod polkasion {
             let creator_ids = self.agreements_creator_map.entry(caller.clone()).or_insert(Vec::new());
             creator_ids.push(index);
             for i in params.signers.iter() {
-                if *i == caller {
-                    continue;
-                }
                 let tmp_ids = self.agreements_collaborator_map.entry(i.clone()).or_insert(Vec::new());
                 tmp_ids.push(index);
             }
@@ -247,8 +244,19 @@ mod polkasion {
 
         #[ink(message)]
         pub fn query_agreement_by_creator(&mut self, creator: AccountId, pageParams: PageParams) -> PageResult<AgreementInfo> {
-
-            let ids = self.agreements_creator_map.get(&creator).unwrap();
+            let list_res = self.agreements_creator_map.get(&creator);
+            if list_res.is_none() {
+                return PageResult{
+                    success: true,
+                    err: String::from("success"),
+                    total: 0,
+                    pages: 0,
+                    page_index: 0,
+                    page_size: 0,
+                    data: Vec::new(),
+                }
+            }
+            let ids = list_res.unwrap();
             let total = ids.len() as u64;
             let (start, end, pages) = cal_pages(&pageParams, total);
             let mut result = Vec::new();
@@ -273,8 +281,19 @@ mod polkasion {
 
         #[ink(message)]
         pub fn query_agreement_by_collaborator(&mut self, collaborator: AccountId, pageParams: PageParams) -> PageResult<AgreementInfo> {
-
-            let ids = self.agreements_collaborator_map.get(&collaborator).unwrap();
+            let list_res = self.agreements_collaborator_map.get(&collaborator);
+            if list_res.is_none() {
+                return PageResult{
+                    success: true,
+                    err: String::from("success"),
+                    total: 0,
+                    pages: 0,
+                    page_index: 0,
+                    page_size: 0,
+                    data: Vec::new(),
+                }
+            }
+            let ids = list_res.unwrap();
             let total = ids.len() as u64;
             let (start, end, pages) = cal_pages(&pageParams, total);
             let mut result = Vec::new();

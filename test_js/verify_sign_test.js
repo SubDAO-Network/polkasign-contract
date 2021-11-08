@@ -13,8 +13,8 @@ const polkasign_abi = "../release/polkasign.contract";
 // const polkasign_address = "5FxUzmXE8FTc2WUfEnjUh86mbR4ELEUd9fqTcaXwqhvBu3Fz";
 // const ws_endpoint = "wss://alpha.subdao.org";
 
-const polkasign_address = "5H1HERkVLkag99FXedGb9tYNKEAzadxvCk3W7CitD9wmkADF";
-const ws_endpoint = "ws://127.0.0.1:9944";
+const polkasign_address = "5DwS2NyzdJwf2axjvdPi6RRUVe28jsixBQ5zjL5mjMdvychX";
+const ws_endpoint = "ws://43.133.174.232:9944";
 
 console.log("contract ws: ", ws_endpoint);
 async function main() {
@@ -60,44 +60,70 @@ async function main() {
     let wait = ms => new Promise(resolve => setTimeout(resolve, ms));
 
     const endowment = 1230000000000n;
-    const gasLimit = 500000n * 10000000n;
+    const gasLimit = 10000000 * 1000000;
     const polkasignAbi = JSON.parse(readFileSync(polkasign_abi).toString());
     const polkasignContract = new ContractPromise(api, polkasignAbi, polkasign_address);
 
+    // {
+    //     console.log("========= begin to query checkSign");
+    //     const { gasConsumed, result, output } = await polkasignContract.query.checkSign(pair.address,
+    //         { value: 0, gasLimit: gasLimit },
+    //         message,
+    //         signature
+    //     )
+    //     console.log("gasConsumed", gasConsumed.toHuman());
+    //     if (result.isOk) {
+    //         console.log('checkSign Success', output.toHuman());
+    //     } else {
+    //         console.error('checkSign Error', result.toHuman());
+    //     }
+    // await wait(10000); // 10s
+    // }
+
+    // {
+    //     console.log("========= begin to query queryAgreementById");
+    //     const { gasConsumed, result, output } = await polkasignContract.query.queryAgreementById(pair.address,
+    //         { value: 0, gasLimit: -1 },
+    //         0
+    //     )
+    //     console.log("gasConsumed", gasConsumed.toHuman());
+    //     if (result.isOk) {
+    //         console.log('queryAgreementById Success', output.toHuman());
+    //     } else {
+    //         console.error('queryAgreementById Error', result.toHuman());
+    //     }
+    //     await wait(10000); // 10s
+    // }
+
     {
-        console.log("========= begin to query checkSign");
-        const { gasConsumed, result, output } = await polkasignContract.query.checkSign(pair.address,
-            { value: 0, gasLimit: gasLimit },
-            message,
-            signature
+        console.log("========= begin to query queryAgreementByCreator");
+        const { gasConsumed, result, output } = await polkasignContract.query.queryAgreementByCreator(pair.address,
+            { value: 0, gasLimit: -1 },
+            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+            [0, 10]
         )
         console.log("gasConsumed", gasConsumed.toHuman());
         if (result.isOk) {
-            console.log('checkSign Success', output.toHuman());
+            console.log('queryAgreementByCollaborator Success', output.toHuman());
         } else {
-            console.error('checkSign Error', result.toHuman());
+            console.error('queryAgreementByCollaborator Error', result.toHuman());
         }
+        await wait(10000); // 10s
     }
 
     {
-        // console.log("========= begin to checkSign");
-        // let nonce = await api.rpc.system.accountNextIndex(pair.address);
-        // const unsubCall1 = await polkasignContract.tx
-        //     .checkSign({ value: 0, gasLimit: gasLimit }
-        //         , message
-        //         , signature)
-        //     .signAndSend(pair, { nonce: nonce }, (result) => {
-        //         if (result.status.isInBlock || result.status.isFinalized) {
-        //             if (!!result.dispatchError) {
-        //                 console.log('isBadOrigin is ', result.dispatchError.isBadOrigin);
-        //                 console.log('isOther is ', result.dispatchError.isOther);
-        //                 console.log('isModule is ', result.dispatchError.isModule);
-        //             } else {
-        //                 console.log('add service success for ', gw_service.id);
-        //             }
-        //             unsubCall1();
-        //         }
-        //     });
+        console.log("========= begin to query queryAgreementByCollaborator");
+        const { gasConsumed, result, output } = await polkasignContract.query.queryAgreementByCollaborator(pair.address,
+            { value: 0, gasLimit: 277379350384 },
+            "5GrwvaEF5zXb26Fz9rcQpDWS57CtERHpNehXCPcNoHGKutQY",
+            [0, 10]
+        )
+        console.log("gasConsumed", gasConsumed.toHuman());
+        if (result.isOk) {
+            console.log('queryAgreementByCollaborator Success', output.toHuman());
+        } else {
+            console.error('queryAgreementByCollaborator Error', result.toHuman());
+        }
         await wait(10000); // 10s
     }
 

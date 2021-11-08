@@ -5,6 +5,12 @@ authors = ["[your_name] <[your_email]>"]
 edition = "2018"
 resolver = "2"
 
+[profile.dev]
+overflow-checks = false
+
+[profile.release]
+overflow-checks = false
+
 [dependencies]
 ink_primitives = { version = "3.0.0-rc3", path = "../ink/crates/primitives", default-features = false }
 ink_metadata = { version = "3.0.0-rc3", path = "../ink/crates/metadata", default-features = false, features = ["derive"], optional = true }
