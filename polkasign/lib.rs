@@ -374,7 +374,7 @@ mod polkasign {
         }
 
         #[ink(message)]
-        pub fn query_agreement_by_creator(&mut self, creator: AccountId, pageParams: PageParams) -> PageResult<AgreementInfo> {
+        pub fn query_agreement_by_creator(&mut self, creator: AccountId, pageParams: PageParams) -> PageResult<AgreementInfoDisplay> {
             let list_res = self.agreements_creator_map.get(&creator);
             if list_res.is_none() {
                 return PageResult{
@@ -392,7 +392,7 @@ mod polkasign {
             let (start, end, pages) = cal_pages(&pageParams, total);
             let mut result = Vec::new();
             for i in start..end {
-                result.push(self.agreements_map.get(&ids[i as usize]).unwrap().clone());
+                result.push(Polkasign::convAgreement2Display(self.agreements_map.get(&ids[i as usize]).unwrap()));
             }
             return PageResult{
                 success: true,
@@ -408,6 +408,10 @@ mod polkasign {
         #[ink(message)]
         pub fn query_agreement_by_id(&mut self, index: u64) -> AgreementInfoDisplay {
             let a = self.agreements_map.get(&index).unwrap();
+            Polkasign::convAgreement2Display(a)
+        }
+
+        fn convAgreement2Display(a: &AgreementInfo) -> AgreementInfoDisplay {
             let sign_infos = a.sign_infos.values().cloned().collect();
             let mut resources: Vec<StorageInfo> = Vec::new();
             let res: Vec<Vec<StorageInfo>> = a.resources.values().cloned().collect();
@@ -418,7 +422,7 @@ mod polkasign {
             }
 
             AgreementInfoDisplay {
-                index,
+                index: a.index,
                 creator: a.creator,
                 name: a.name.clone(),
                 create_at: a.create_at,
@@ -431,7 +435,7 @@ mod polkasign {
         }
 
         #[ink(message)]
-        pub fn query_agreement_by_collaborator(&mut self, collaborator: AccountId, pageParams: PageParams) -> PageResult<AgreementInfo> {
+        pub fn query_agreement_by_collaborator(&mut self, collaborator: AccountId, pageParams: PageParams) -> PageResult<AgreementInfoDisplay> {
             let list_res = self.agreements_collaborator_map.get(&collaborator);
             if list_res.is_none() {
                 return PageResult{
@@ -449,7 +453,7 @@ mod polkasign {
             let (start, end, pages) = cal_pages(&pageParams, total);
             let mut result = Vec::new();
             for i in start..end {
-                result.push(self.agreements_map.get(&ids[i as usize]).unwrap().clone());
+                result.push(Polkasign::convAgreement2Display(self.agreements_map.get(&ids[i as usize]).unwrap()));
             }
             return PageResult{
                 success: true,
