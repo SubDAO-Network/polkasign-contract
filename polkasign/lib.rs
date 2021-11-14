@@ -63,30 +63,6 @@ mod polkasign {
 
     use page_helper::{PageParams, PageResult, cal_pages};
 
-    use core::{
-        convert::From,
-    };
-
-    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
-    #[cfg_attr(
-    feature = "std",
-    derive(scale_info::TypeInfo)
-    )]
-    pub struct Signature([u8; 64]);
-
-    impl From<[u8; 64]> for Signature {
-        fn from(src: [u8; 64]) -> Self {
-            Signature(src)
-        }
-    }
-
-    impl AsRef<[u8; 64]> for Signature {
-        #[inline]
-        fn as_ref(&self) -> &[u8; 64] {
-            &self.0
-        }
-    }
-
     #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
     feature = "std",
@@ -109,6 +85,7 @@ mod polkasign {
     derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
     )]
     pub struct SignInfo {
+        sign: Vec<u8>,
         addr: AccountId,
         create_at: u64,
     }
@@ -128,11 +105,31 @@ mod polkasign {
         signers: Vec<AccountId>,
         agreement_file: StorageInfo,
         // map signs: accountId -> sign
-        signs: BTreeMap<AccountId, Signature>,
         sign_infos: BTreeMap<AccountId, SignInfo>,
         // map resources: accountId -> resources vec
         // like comment
         resources: BTreeMap<AccountId, Vec<StorageInfo>>,
+    }
+
+    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[cfg_attr(
+    feature = "std",
+    derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
+    )]
+    pub struct AgreementInfoDisplay {
+        index: u64,
+        creator: AccountId,
+        name: String,
+        create_at: u64,
+        // init=0, waiting=1, finished=2
+        status: u8,
+        signers: Vec<AccountId>,
+        agreement_file: StorageInfo,
+        // map signs: accountId -> sign
+        sign_infos: Vec<SignInfo>,
+        // map resources: accountId -> resources vec
+        // like comment
+        resources: Vec<StorageInfo>,
     }
 
     #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
@@ -209,7 +206,6 @@ mod polkasign {
                 status: 0,
                 signers: params.signers,
                 agreement_file: storage_info,
-                signs: BTreeMap::new(),
                 sign_infos: BTreeMap::new(),
                 resources: BTreeMap::new(),
             };
@@ -234,8 +230,8 @@ mod polkasign {
             // if sign enough, set waiting
             let a = self.agreements_map.get_mut(&index).unwrap();
             a.status = 1;
-            a.signs.insert(caller, Signature::from(sign));
             a.sign_infos.insert(caller, SignInfo{
+                sign: sign.to_vec(),
                 addr: caller,
                 create_at: time_at,
             });
@@ -262,8 +258,8 @@ mod polkasign {
 
             // if sign enough, set waiting
             a.status = 1;
-            a.signs.insert(caller, Signature::from(sign));
             a.sign_infos.insert(caller, SignInfo{
+                sign: sign.to_vec(),
                 addr: caller,
                 create_at: time_at,
             });
@@ -294,14 +290,14 @@ mod polkasign {
             assert!(self._check_sr25519_sign(*caller.as_ref(), *agreement.agreement_file.hash.as_ref(), sign.clone()), "wrong sign");
 
             let agreement = self.agreements_map.get_mut(&index).unwrap();
-            agreement.signs.insert(caller, Signature::from(sign));
             agreement.sign_infos.insert(caller, SignInfo{
+                sign: sign.to_vec(),
                 addr: caller,
                 create_at: time_at,
             });
 
             // if sign enough, set finished
-            if agreement.signs.len() >= agreement.signers.len() {
+            if agreement.sign_infos.len() >= agreement.signers.len() {
                 agreement.status = 2;
             }
         }
@@ -325,14 +321,14 @@ mod polkasign {
 
             assert!(public_key.verify(agreement.agreement_file.hash, &sig).is_ok(), "Signature wrong");
 
-            agreement.signs.insert(caller, Signature::from(sign));
             agreement.sign_infos.insert(caller, SignInfo{
+                sign: sign.to_vec(),
                 addr: caller,
                 create_at: time_at,
             });
 
             // if sign enough, set finished
-            if agreement.signs.len() >= agreement.signers.len() {
+            if agreement.sign_infos.len() >= agreement.signers.len() {
                 agreement.status = 2;
             }
         }
@@ -410,8 +406,28 @@ mod polkasign {
         }
 
         #[ink(message)]
-        pub fn query_agreement_by_id(&mut self, index: u64) -> AgreementInfo {
-            self.agreements_map.get(&index).unwrap().clone()
+        pub fn query_agreement_by_id(&mut self, index: u64) -> AgreementInfoDisplay {
+            let a = self.agreements_map.get(&index).unwrap();
+            let sign_infos = a.sign_infos.values().cloned().collect();
+            let mut resources: Vec<StorageInfo> = Vec::new();
+            let res: Vec<Vec<StorageInfo>> = a.resources.values().cloned().collect();
+            for item in res {
+                for info in item {
+                    resources.push(info);
+                }
+            }
+
+            AgreementInfoDisplay {
+                index,
+                creator: a.creator,
+                name: a.name.clone(),
+                create_at: a.create_at,
+                status: a.status,
+                signers: a.signers.clone(),
+                agreement_file: a.agreement_file.clone(),
+                sign_infos,
+                resources
+            }
         }
 
         #[ink(message)]
