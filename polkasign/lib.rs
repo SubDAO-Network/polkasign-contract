@@ -2,9 +2,56 @@
 
 extern crate alloc;
 use ink_lang as ink;
+use ink_env::{Environment};
 
-#[ink::contract]
-mod polkasion {
+/// Define the operations to interact with the substrate runtime
+#[ink::chain_extension]
+pub trait CryptoExtension {
+    type ErrorCode = CryptoExtensionErr;
+
+    #[ink(extension = 1101, returns_result = false)]
+    fn fetch_random() -> [u8; 32];
+
+    #[ink(extension = 1102, returns_result = false)]
+    fn verify_sr25519(account: [u8; 32], msg: [u8; 32], sign: [u8; 64]);
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, scale::Encode, scale::Decode)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub enum CryptoExtensionErr {
+    VerifyErr,
+}
+
+impl ink_env::chain_extension::FromStatusCode for CryptoExtensionErr {
+    fn from_status_code(status_code: u32) -> Result<(), Self> {
+        match status_code {
+            0 => Ok(()),
+            1 => Err(Self::VerifyErr),
+            _ => panic!("encountered unknown status code"),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+#[cfg_attr(feature = "std", derive(scale_info::TypeInfo))]
+pub enum CustomEnvironment {}
+
+impl Environment for CustomEnvironment {
+    const MAX_EVENT_TOPICS: usize =
+        <ink_env::DefaultEnvironment as Environment>::MAX_EVENT_TOPICS;
+
+    type AccountId = <ink_env::DefaultEnvironment as Environment>::AccountId;
+    type Balance = <ink_env::DefaultEnvironment as Environment>::Balance;
+    type Hash = <ink_env::DefaultEnvironment as Environment>::Hash;
+    type BlockNumber = <ink_env::DefaultEnvironment as Environment>::BlockNumber;
+    type Timestamp = <ink_env::DefaultEnvironment as Environment>::Timestamp;
+    type RentFraction = <ink_env::DefaultEnvironment as Environment>::RentFraction;
+
+    type ChainExtension = CryptoExtension;
+}
+
+#[ink::contract(env = crate::CustomEnvironment)]
+mod polkasign {
     use alloc::string::String;
     use ink_prelude::vec::Vec;
     use ink_prelude::collections::BTreeMap;
@@ -12,8 +59,33 @@ mod polkasion {
         collections::HashMap as StorageHashMap,
         traits::{PackedLayout, SpreadLayout},
     };
+    use crate::CryptoExtensionErr;
 
     use page_helper::{PageParams, PageResult, cal_pages};
+
+    use core::{
+        convert::From,
+    };
+
+    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[cfg_attr(
+    feature = "std",
+    derive(scale_info::TypeInfo)
+    )]
+    pub struct Signature([u8; 64]);
+
+    impl From<[u8; 64]> for Signature {
+        fn from(src: [u8; 64]) -> Self {
+            Signature(src)
+        }
+    }
+
+    impl AsRef<[u8; 64]> for Signature {
+        #[inline]
+        fn as_ref(&self) -> &[u8; 64] {
+            &self.0
+        }
+    }
 
     #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
@@ -56,7 +128,7 @@ mod polkasion {
         signers: Vec<AccountId>,
         agreement_file: StorageInfo,
         // map signs: accountId -> sign
-        signs: BTreeMap<AccountId, [u8; 64]>,
+        signs: BTreeMap<AccountId, Signature>,
         sign_infos: BTreeMap<AccountId, SignInfo>,
         // map resources: accountId -> resources vec
         // like comment
@@ -155,6 +227,25 @@ mod polkasion {
             let caller = self.env().caller();
             let time_at = self.env().block_timestamp();
             let index = self.create_agreement(params);
+            let a = self.agreements_map.get(&index).unwrap();
+
+            let file_hash = a.agreement_file.hash.clone();
+            assert!(self._check_sr25519_sign(*caller.as_ref(), *file_hash.as_ref(), sign.clone()), "wrong sign");
+            // if sign enough, set waiting
+            let a = self.agreements_map.get_mut(&index).unwrap();
+            a.status = 1;
+            a.signs.insert(caller, Signature::from(sign));
+            a.sign_infos.insert(caller, SignInfo{
+                addr: caller,
+                create_at: time_at,
+            });
+        }
+
+        #[ink(message)]
+        pub fn create_agreement_with_ed25519_sign(&mut self, params: CreateAgreementParams, sign: [u8; 64]) {
+            let caller = self.env().caller();
+            let time_at = self.env().block_timestamp();
+            let index = self.create_agreement(params);
             let a = self.agreements_map.get_mut(&index).unwrap();
 
             let public_key = match ed25519_compact::PublicKey::from_slice(caller.as_ref()) {
@@ -171,7 +262,7 @@ mod polkasion {
 
             // if sign enough, set waiting
             a.status = 1;
-            a.signs.insert(caller, sign);
+            a.signs.insert(caller, Signature::from(sign));
             a.sign_infos.insert(caller, SignInfo{
                 addr: caller,
                 create_at: time_at,
@@ -199,6 +290,27 @@ mod polkasion {
             let caller = self.env().caller();
             let time_at = self.env().block_timestamp();
             self.attach_resource_to_agreement(index, info);
+            let agreement = self.agreements_map.get(&index).unwrap();
+            assert!(self._check_sr25519_sign(*caller.as_ref(), *agreement.agreement_file.hash.as_ref(), sign.clone()), "wrong sign");
+
+            let agreement = self.agreements_map.get_mut(&index).unwrap();
+            agreement.signs.insert(caller, Signature::from(sign));
+            agreement.sign_infos.insert(caller, SignInfo{
+                addr: caller,
+                create_at: time_at,
+            });
+
+            // if sign enough, set finished
+            if agreement.signs.len() >= agreement.signers.len() {
+                agreement.status = 2;
+            }
+        }
+
+        #[ink(message)]
+        pub fn attach_resource_with_ed25519_sign(&mut self, index: u64, info: StorageInfo, sign: [u8; 64]) {
+            let caller = self.env().caller();
+            let time_at = self.env().block_timestamp();
+            self.attach_resource_to_agreement(index, info);
             let agreement = self.agreements_map.get_mut(&index).unwrap();
 
             let public_key = match ed25519_compact::PublicKey::from_slice(caller.as_ref()) {
@@ -213,7 +325,7 @@ mod polkasion {
 
             assert!(public_key.verify(agreement.agreement_file.hash, &sig).is_ok(), "Signature wrong");
 
-            agreement.signs.insert(caller, sign);
+            agreement.signs.insert(caller, Signature::from(sign));
             agreement.sign_infos.insert(caller, SignInfo{
                 addr: caller,
                 create_at: time_at,
@@ -226,7 +338,7 @@ mod polkasion {
         }
 
         #[ink(message)]
-        pub fn check_sign(&mut self, msg: [u8; 32], sign: [u8; 64]) -> bool {
+        pub fn check_ed25519_sign(&mut self, msg: [u8; 32], sign: [u8; 64]) -> bool {
 
             let caller = self.env().caller();
             let public_key = match ed25519_compact::PublicKey::from_slice(caller.as_ref()) {
@@ -240,6 +352,29 @@ mod polkasion {
             };
 
             public_key.verify(msg, &sig).is_ok()
+        }
+
+        #[ink(message)]
+        pub fn check_sr25519_sign(&mut self, msg: [u8; 32], sign: [u8; 64]) -> bool {
+            let caller = self.env().caller();
+            assert!(self._check_sr25519_sign(*caller.as_ref(), msg, sign), "wrong sign");
+            true
+        }
+
+        pub fn _check_sr25519_sign(&self, public: [u8; 32], msg: [u8; 32], sign: [u8; 64]) -> bool {
+            let res = self.env().extension().verify_sr25519(public, msg, sign);
+            if res.is_ok() {
+                return true;
+            }
+
+            return false
+        }
+
+        #[ink(message)]
+        pub fn fetch_random(&mut self) -> Result<[u8; 32], CryptoExtensionErr> {
+            // Get the on-chain random seed
+            let new_random = self.env().extension().fetch_random()?;
+            Ok(new_random)
         }
 
         #[ink(message)]

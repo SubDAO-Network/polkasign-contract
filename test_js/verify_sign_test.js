@@ -23,7 +23,7 @@ async function main() {
 
     const keyring = new Keyring();
     const pair = keyring.addFromUri("model action demand click genius pizza pumpkin develop muffin acquire supreme expand",
-        { name: 'know pair' }, 'ed25519');
+        { name: 'know pair' }, 'sr25519');
     // the pair has been added to our keyring
     console.log(keyring.pairs.length, 'pairs available');
 
