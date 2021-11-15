@@ -1,7 +1,7 @@
 {
   "metadataVersion": "0.1.0",
   "source": {
-    "hash": "0xc6c262336486f58ae322cd8aa88e3be8947e2597729375df3da2e3d2ebe87704",
+    "hash": "0x7da899a29cc7aa551949fc73f91471e621904c5ed938d68942383a3ed3c71e6a",
     "language": "ink! 3.0.0-rc4",
     "compiler": "rustc 1.58.0-nightly"
   },
@@ -123,7 +123,7 @@
               "displayName": [
                 "CreateAgreementParams"
               ],
-              "type": 30
+              "type": 27
             }
           }
         ],
@@ -149,14 +149,14 @@
               "displayName": [
                 "CreateAgreementParams"
               ],
-              "type": 30
+              "type": 27
             }
           },
           {
             "name": "sign",
             "type": {
               "displayName": [],
-              "type": 17
+              "type": 28
             }
           }
         ],
@@ -168,6 +168,34 @@
         "payable": false,
         "returnType": null,
         "selector": "0xd8f3bfc8"
+      },
+      {
+        "args": [
+          {
+            "name": "params",
+            "type": {
+              "displayName": [
+                "CreateAgreementParams"
+              ],
+              "type": 27
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 28
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "create_agreement_with_ed25519_sign"
+        ],
+        "payable": false,
+        "returnType": null,
+        "selector": "0xac893471"
       },
       {
         "args": [
@@ -223,7 +251,7 @@
             "name": "sign",
             "type": {
               "displayName": [],
-              "type": 17
+              "type": 28
             }
           }
         ],
@@ -239,6 +267,43 @@
       {
         "args": [
           {
+            "name": "index",
+            "type": {
+              "displayName": [
+                "u64"
+              ],
+              "type": 4
+            }
+          },
+          {
+            "name": "info",
+            "type": {
+              "displayName": [
+                "StorageInfo"
+              ],
+              "type": 13
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 28
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "attach_resource_with_ed25519_sign"
+        ],
+        "payable": false,
+        "returnType": null,
+        "selector": "0x4ccc48f8"
+      },
+      {
+        "args": [
+          {
             "name": "msg",
             "type": {
               "displayName": [],
@@ -249,23 +314,70 @@
             "name": "sign",
             "type": {
               "displayName": [],
-              "type": 17
+              "type": 28
             }
           }
         ],
         "docs": [],
         "mutates": true,
         "name": [
-          "check_sign"
+          "check_ed25519_sign"
         ],
         "payable": false,
         "returnType": {
           "displayName": [
             "bool"
           ],
-          "type": 31
+          "type": 29
         },
-        "selector": "0x5f8c8c05"
+        "selector": "0x0f655cd2"
+      },
+      {
+        "args": [
+          {
+            "name": "msg",
+            "type": {
+              "displayName": [],
+              "type": 2
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 28
+            }
+          }
+        ],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "check_sr25519_sign"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "bool"
+          ],
+          "type": 29
+        },
+        "selector": "0xed8aa2d9"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "mutates": true,
+        "name": [
+          "fetch_random"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "Result"
+          ],
+          "type": 30
+        },
+        "selector": "0x03c9add5"
       },
       {
         "args": [
@@ -322,9 +434,9 @@
         "payable": false,
         "returnType": {
           "displayName": [
-            "AgreementInfo"
+            "AgreementInfoDisplay"
           ],
-          "type": 10
+          "type": 34
         },
         "selector": "0xd57deacb"
       },
@@ -503,7 +615,7 @@
                                       "layout": {
                                         "cell": {
                                           "key": "0x0500000002000000000000000000000000000000000000000000000000000000",
-                                          "ty": 27
+                                          "ty": 24
                                         }
                                       },
                                       "len": 4294967295,
@@ -528,7 +640,7 @@
                       "layout": {
                         "cell": {
                           "key": "0x0600000002000000000000000000000000000000000000000000000000000000",
-                          "ty": 28
+                          "ty": 25
                         }
                       },
                       "offset": "0x0500000002000000000000000000000000000000000000000000000000000000",
@@ -583,7 +695,7 @@
                                       "layout": {
                                         "cell": {
                                           "key": "0x0700000003000000000000000000000000000000000000000000000000000000",
-                                          "ty": 27
+                                          "ty": 24
                                         }
                                       },
                                       "len": 4294967295,
@@ -608,7 +720,7 @@
                       "layout": {
                         "cell": {
                           "key": "0x0800000003000000000000000000000000000000000000000000000000000000",
-                          "ty": 28
+                          "ty": 25
                         }
                       },
                       "offset": "0x0700000003000000000000000000000000000000000000000000000000000000",
@@ -825,18 +937,13 @@
               "typeName": "StorageInfo"
             },
             {
-              "name": "signs",
-              "type": 15,
-              "typeName": "BTreeMap<AccountId,[u8; 64]>"
-            },
-            {
               "name": "sign_infos",
-              "type": 19,
+              "type": 15,
               "typeName": "BTreeMap<AccountId, SignInfo>"
             },
             {
               "name": "resources",
-              "type": 23,
+              "type": 20,
               "typeName": "BTreeMap<AccountId, Vec<StorageInfo>>"
             }
           ]
@@ -844,7 +951,7 @@
       },
       "path": [
         "polkasign",
-        "polkasion",
+        "polkasign",
         "AgreementInfo"
       ]
     },
@@ -894,7 +1001,7 @@
       },
       "path": [
         "polkasign",
-        "polkasion",
+        "polkasign",
         "StorageInfo"
       ]
     },
@@ -920,7 +1027,7 @@
         "composite": {
           "fields": [
             {
-              "type": 18,
+              "type": 19,
               "typeName": "[(K, V)]"
             }
           ]
@@ -943,8 +1050,35 @@
     },
     {
       "def": {
-        "array": {
-          "len": 64,
+        "composite": {
+          "fields": [
+            {
+              "name": "sign",
+              "type": 18,
+              "typeName": "Vec<u8>"
+            },
+            {
+              "name": "addr",
+              "type": 1,
+              "typeName": "AccountId"
+            },
+            {
+              "name": "create_at",
+              "type": 4,
+              "typeName": "u64"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "polkasign",
+        "SignInfo"
+      ]
+    },
+    {
+      "def": {
+        "sequence": {
           "type": 3
         }
       }
@@ -961,14 +1095,14 @@
         "composite": {
           "fields": [
             {
-              "type": 22,
+              "type": 23,
               "typeName": "[(K, V)]"
             }
           ]
         }
       },
       "params": [
-        20
+        21
       ],
       "path": [
         "BTreeMap"
@@ -978,63 +1112,7 @@
       "def": {
         "tuple": [
           1,
-          21
-        ]
-      }
-    },
-    {
-      "def": {
-        "composite": {
-          "fields": [
-            {
-              "name": "addr",
-              "type": 1,
-              "typeName": "AccountId"
-            },
-            {
-              "name": "create_at",
-              "type": 4,
-              "typeName": "u64"
-            }
-          ]
-        }
-      },
-      "path": [
-        "polkasign",
-        "polkasion",
-        "SignInfo"
-      ]
-    },
-    {
-      "def": {
-        "sequence": {
-          "type": 20
-        }
-      }
-    },
-    {
-      "def": {
-        "composite": {
-          "fields": [
-            {
-              "type": 26,
-              "typeName": "[(K, V)]"
-            }
-          ]
-        }
-      },
-      "params": [
-        24
-      ],
-      "path": [
-        "BTreeMap"
-      ]
-    },
-    {
-      "def": {
-        "tuple": [
-          1,
-          25
+          22
         ]
       }
     },
@@ -1048,7 +1126,7 @@
     {
       "def": {
         "sequence": {
-          "type": 24
+          "type": 21
         }
       }
     },
@@ -1093,7 +1171,7 @@
           "fields": [
             {
               "name": "value",
-              "type": 29,
+              "type": 26,
               "typeName": "V"
             },
             {
@@ -1105,7 +1183,7 @@
         }
       },
       "params": [
-        29
+        26
       ],
       "path": [
         "ink_storage",
@@ -1145,14 +1223,71 @@
       },
       "path": [
         "polkasign",
-        "polkasion",
+        "polkasign",
         "CreateAgreementParams"
       ]
     },
     {
       "def": {
+        "array": {
+          "len": 64,
+          "type": 3
+        }
+      }
+    },
+    {
+      "def": {
         "primitive": "bool"
       }
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "fields": [
+                {
+                  "type": 2,
+                  "typeName": "T"
+                }
+              ],
+              "name": "Ok"
+            },
+            {
+              "fields": [
+                {
+                  "type": 31,
+                  "typeName": "E"
+                }
+              ],
+              "name": "Err"
+            }
+          ]
+        }
+      },
+      "params": [
+        2,
+        31
+      ],
+      "path": [
+        "Result"
+      ]
+    },
+    {
+      "def": {
+        "variant": {
+          "variants": [
+            {
+              "discriminant": 0,
+              "name": "VerifyErr"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "CryptoExtensionErr"
+      ]
     },
     {
       "def": {
@@ -1183,7 +1318,7 @@
           "fields": [
             {
               "name": "success",
-              "type": 31,
+              "type": 29,
               "typeName": "bool"
             },
             {
@@ -1213,14 +1348,14 @@
             },
             {
               "name": "data",
-              "type": 34,
+              "type": 36,
               "typeName": "Vec<T>"
             }
           ]
         }
       },
       "params": [
-        10
+        34
       ],
       "path": [
         "page_helper",
@@ -1230,8 +1365,73 @@
     },
     {
       "def": {
+        "composite": {
+          "fields": [
+            {
+              "name": "index",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "creator",
+              "type": 1,
+              "typeName": "AccountId"
+            },
+            {
+              "name": "name",
+              "type": 11,
+              "typeName": "String"
+            },
+            {
+              "name": "create_at",
+              "type": 4,
+              "typeName": "u64"
+            },
+            {
+              "name": "status",
+              "type": 3,
+              "typeName": "u8"
+            },
+            {
+              "name": "signers",
+              "type": 12,
+              "typeName": "Vec<AccountId>"
+            },
+            {
+              "name": "agreement_file",
+              "type": 13,
+              "typeName": "StorageInfo"
+            },
+            {
+              "name": "sign_infos",
+              "type": 35,
+              "typeName": "Vec<SignInfo>"
+            },
+            {
+              "name": "resources",
+              "type": 22,
+              "typeName": "Vec<StorageInfo>"
+            }
+          ]
+        }
+      },
+      "path": [
+        "polkasign",
+        "polkasign",
+        "AgreementInfoDisplay"
+      ]
+    },
+    {
+      "def": {
         "sequence": {
-          "type": 10
+          "type": 17
+        }
+      }
+    },
+    {
+      "def": {
+        "sequence": {
+          "type": 34
         }
       }
     }
