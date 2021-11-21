@@ -269,6 +269,7 @@ mod polkasign {
                 addr: caller,
                 create_at: time_at,
             });
+            agreement.status = 1;
 
             // if sign enough, set finished
             if agreement.sign_infos.len() >= agreement.signers.len() {
