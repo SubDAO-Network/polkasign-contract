@@ -31,8 +31,8 @@ async function main() {
     console.log(pair.meta.name, 'has address', pair.address);
 
     // create the message, actual signature and verify
-    // const message = stringToU8a('12345678900987654321123456789009');
-    const message = hexToU8a('0xa00f94828aebefb421b1180ffe372e0fd5fbdc90bc7348c1ad4a0819910f1dfe');
+    const message = stringToU8a('<Bytes>bafybeih2j3lljld2idmjviarnd3r4sj</Bytes>');
+    // const message = hexToU8a('0xa00f94828aebefb421b1180ffe372e0fd5fbdc90bc7348c1ad4a0819910f1dfe');
     const signature = pair.sign(message);
     const isValid = pair.verify(message, signature);
 

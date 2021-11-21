@@ -3,6 +3,7 @@
 extern crate alloc;
 use ink_lang as ink;
 use ink_env::{Environment};
+use ink_prelude::vec::Vec;
 
 /// Define the operations to interact with the substrate runtime
 #[ink::chain_extension]
@@ -14,6 +15,9 @@ pub trait CryptoExtension {
 
     #[ink(extension = 1102, returns_result = false)]
     fn verify_sr25519(account: [u8; 32], msg: [u8; 32], sign: [u8; 64]);
+
+    #[ink(extension = 1103, returns_result = false)]
+    fn verify_sr25519_bytes(account: [u8; 32], msg: [u8; 47], sign: [u8; 64]);
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, scale::Encode, scale::Decode)]
@@ -151,9 +155,8 @@ mod polkasign {
     }
 
     #[ink(event)]
-    pub struct AttachAgreementEvent {
+    pub struct UpdateAgreementEvent {
         index: u64,
-        hash: Hash,
         creator: AccountId,
     }
 
@@ -226,37 +229,9 @@ mod polkasign {
             let a = self.agreements_map.get(&index).unwrap();
 
             let file_hash = a.agreement_file.hash.clone();
-            assert!(self._check_sr25519_sign(*caller.as_ref(), *file_hash.as_ref(), sign.clone()), "wrong sign");
+            assert!(self._check_sr25519_bytes_sign(*caller.as_ref(), *file_hash.as_ref(), sign.clone()), "wrong sign");
             // if sign enough, set waiting
             let a = self.agreements_map.get_mut(&index).unwrap();
-            a.status = 1;
-            a.sign_infos.insert(caller, SignInfo{
-                sign: sign.to_vec(),
-                addr: caller,
-                create_at: time_at,
-            });
-        }
-
-        #[ink(message)]
-        pub fn create_agreement_with_ed25519_sign(&mut self, params: CreateAgreementParams, sign: [u8; 64]) {
-            let caller = self.env().caller();
-            let time_at = self.env().block_timestamp();
-            let index = self.create_agreement(params);
-            let a = self.agreements_map.get_mut(&index).unwrap();
-
-            let public_key = match ed25519_compact::PublicKey::from_slice(caller.as_ref()) {
-                Ok(pk) => pk,
-                Err(_) => panic!("covert PublicKey err"),
-            };
-
-            let sig = match ed25519_compact::Signature::from_slice(&sign[..]) {
-                Ok(s) => s,
-                Err(_) => panic!("covert Signature err"),
-            };
-
-            assert!(public_key.verify(a.agreement_file.hash, &sig).is_ok(), "Signature wrong");
-
-            // if sign enough, set waiting
             a.status = 1;
             a.sign_infos.insert(caller, SignInfo{
                 sign: sign.to_vec(),
@@ -274,9 +249,8 @@ mod polkasign {
             let storage_hash = info.hash;
             let resources = agreement.resources.entry(caller.clone()).or_insert(Vec::new());
             resources.push(info);
-            self.env().emit_event(AttachAgreementEvent {
+            self.env().emit_event(UpdateAgreementEvent {
                 index,
-                hash: storage_hash,
                 creator: caller,
             });
         }
@@ -287,7 +261,7 @@ mod polkasign {
             let time_at = self.env().block_timestamp();
             self.attach_resource_to_agreement(index, info);
             let agreement = self.agreements_map.get(&index).unwrap();
-            assert!(self._check_sr25519_sign(*caller.as_ref(), *agreement.agreement_file.hash.as_ref(), sign.clone()), "wrong sign");
+            assert!(self._check_sr25519_bytes_sign(*caller.as_ref(), *agreement.agreement_file.hash.as_ref(), sign.clone()), "wrong sign");
 
             let agreement = self.agreements_map.get_mut(&index).unwrap();
             agreement.sign_infos.insert(caller, SignInfo{
@@ -300,60 +274,19 @@ mod polkasign {
             if agreement.sign_infos.len() >= agreement.signers.len() {
                 agreement.status = 2;
             }
-        }
-
-        #[ink(message)]
-        pub fn attach_resource_with_ed25519_sign(&mut self, index: u64, info: StorageInfo, sign: [u8; 64]) {
-            let caller = self.env().caller();
-            let time_at = self.env().block_timestamp();
-            self.attach_resource_to_agreement(index, info);
-            let agreement = self.agreements_map.get_mut(&index).unwrap();
-
-            let public_key = match ed25519_compact::PublicKey::from_slice(caller.as_ref()) {
-                Ok(pk) => pk,
-                Err(_) => panic!("covert PublicKey err"),
-            };
-
-            let sig = match ed25519_compact::Signature::from_slice(&sign[..]) {
-                Ok(s) => s,
-                Err(_) => panic!("covert Signature err"),
-            };
-
-            assert!(public_key.verify(agreement.agreement_file.hash, &sig).is_ok(), "Signature wrong");
-
-            agreement.sign_infos.insert(caller, SignInfo{
-                sign: sign.to_vec(),
-                addr: caller,
-                create_at: time_at,
-            });
-
-            // if sign enough, set finished
-            if agreement.sign_infos.len() >= agreement.signers.len() {
-                agreement.status = 2;
-            }
-        }
-
-        #[ink(message)]
-        pub fn check_ed25519_sign(&mut self, msg: [u8; 32], sign: [u8; 64]) -> bool {
-
-            let caller = self.env().caller();
-            let public_key = match ed25519_compact::PublicKey::from_slice(caller.as_ref()) {
-                Ok(pk) => pk,
-                Err(_) => panic!("covert PublicKey err"),
-            };
-
-            let sig = match ed25519_compact::Signature::from_slice(&sign[..]) {
-                Ok(s) => s,
-                Err(_) => panic!("covert Signature err"),
-            };
-
-            public_key.verify(msg, &sig).is_ok()
         }
 
         #[ink(message)]
         pub fn check_sr25519_sign(&mut self, msg: [u8; 32], sign: [u8; 64]) -> bool {
             let caller = self.env().caller();
             assert!(self._check_sr25519_sign(*caller.as_ref(), msg, sign), "wrong sign");
+            true
+        }
+
+        #[ink(message)]
+        pub fn check_sr25519_bytes_sign(&mut self, msg: [u8; 32], sign: [u8; 64]) -> bool {
+            let caller = self.env().caller();
+            assert!(self._check_sr25519_bytes_sign(*caller.as_ref(), msg, sign), "wrong sign");
             true
         }
 
@@ -366,11 +299,32 @@ mod polkasign {
             return false
         }
 
-        #[ink(message)]
-        pub fn fetch_random(&mut self) -> Result<[u8; 32], CryptoExtensionErr> {
-            // Get the on-chain random seed
-            let new_random = self.env().extension().fetch_random()?;
-            Ok(new_random)
+        const bytes_pre: [char; 7] = ['<', 'B', 'y', 't', 'e', 's', '>'];
+        const bytes_sub: [char; 8] = ['<', '/', 'B', 'y', 't', 'e', 's', '>'];
+        pub fn _check_sr25519_bytes_sign(&self, public: [u8; 32], msg: [u8; 32], sign: [u8; 64]) -> bool {
+            let mut tmp = [0; 47];
+            let mut index = 0;
+            // Polkasign::append_bytes(&tmp, bytes_pre.as_ref());
+            // Polkasign::append_bytes(&tmp, msg.as_ref());
+            // Polkasign::append_bytes(&tmp, bytes_sub.as_ref());
+            for ch in Polkasign::bytes_pre {
+                tmp[index.clone()] = ch as u8;
+                index += 1;
+            }
+            for ch in msg {
+                tmp[index.clone()] = ch;
+                index += 1;
+            }
+            for ch in Polkasign::bytes_sub {
+                tmp[index.clone()] = ch as u8;
+                index += 1;
+            }
+            let res = self.env().extension().verify_sr25519_bytes(public, tmp, sign);
+            if res.is_ok() {
+                return true;
+            }
+
+            return false
         }
 
         #[ink(message)]
@@ -409,6 +363,16 @@ mod polkasign {
         pub fn query_agreement_by_id(&mut self, index: u64) -> AgreementInfoDisplay {
             let a = self.agreements_map.get(&index).unwrap();
             Polkasign::convAgreement2Display(a)
+        }
+
+        #[ink(message)]
+        pub fn owner(&self) -> AccountId {
+            self.owner
+        }
+
+        #[ink(message)]
+        pub fn index(&self) -> u64 {
+            self.index.clone()
         }
 
         fn convAgreement2Display(a: &AgreementInfo) -> AgreementInfoDisplay {

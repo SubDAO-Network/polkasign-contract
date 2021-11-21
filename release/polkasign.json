@@ -1,7 +1,7 @@
 {
   "metadataVersion": "0.1.0",
   "source": {
-    "hash": "0x7da899a29cc7aa551949fc73f91471e621904c5ed938d68942383a3ed3c71e6a",
+    "hash": "0xe814ce20be566b9c2de15ef1bc168abc3a61980d232ccdfdc1b153466c3b3e77",
     "language": "ink! 3.0.0-rc4",
     "compiler": "rustc 1.58.0-nightly"
   },
@@ -90,17 +90,6 @@
           {
             "docs": [],
             "indexed": false,
-            "name": "hash",
-            "type": {
-              "displayName": [
-                "Hash"
-              ],
-              "type": 14
-            }
-          },
-          {
-            "docs": [],
-            "indexed": false,
             "name": "creator",
             "type": {
               "displayName": [
@@ -111,7 +100,7 @@
           }
         ],
         "docs": [],
-        "name": "AttachAgreementEvent"
+        "name": "UpdateAgreementEvent"
       }
     ],
     "messages": [
@@ -168,34 +157,6 @@
         "payable": false,
         "returnType": null,
         "selector": "0xd8f3bfc8"
-      },
-      {
-        "args": [
-          {
-            "name": "params",
-            "type": {
-              "displayName": [
-                "CreateAgreementParams"
-              ],
-              "type": 27
-            }
-          },
-          {
-            "name": "sign",
-            "type": {
-              "displayName": [],
-              "type": 28
-            }
-          }
-        ],
-        "docs": [],
-        "mutates": true,
-        "name": [
-          "create_agreement_with_ed25519_sign"
-        ],
-        "payable": false,
-        "returnType": null,
-        "selector": "0xac893471"
       },
       {
         "args": [
@@ -267,74 +228,6 @@
       {
         "args": [
           {
-            "name": "index",
-            "type": {
-              "displayName": [
-                "u64"
-              ],
-              "type": 4
-            }
-          },
-          {
-            "name": "info",
-            "type": {
-              "displayName": [
-                "StorageInfo"
-              ],
-              "type": 13
-            }
-          },
-          {
-            "name": "sign",
-            "type": {
-              "displayName": [],
-              "type": 28
-            }
-          }
-        ],
-        "docs": [],
-        "mutates": true,
-        "name": [
-          "attach_resource_with_ed25519_sign"
-        ],
-        "payable": false,
-        "returnType": null,
-        "selector": "0x4ccc48f8"
-      },
-      {
-        "args": [
-          {
-            "name": "msg",
-            "type": {
-              "displayName": [],
-              "type": 2
-            }
-          },
-          {
-            "name": "sign",
-            "type": {
-              "displayName": [],
-              "type": 28
-            }
-          }
-        ],
-        "docs": [],
-        "mutates": true,
-        "name": [
-          "check_ed25519_sign"
-        ],
-        "payable": false,
-        "returnType": {
-          "displayName": [
-            "bool"
-          ],
-          "type": 29
-        },
-        "selector": "0x0f655cd2"
-      },
-      {
-        "args": [
-          {
             "name": "msg",
             "type": {
               "displayName": [],
@@ -364,20 +257,35 @@
         "selector": "0xed8aa2d9"
       },
       {
-        "args": [],
+        "args": [
+          {
+            "name": "msg",
+            "type": {
+              "displayName": [],
+              "type": 2
+            }
+          },
+          {
+            "name": "sign",
+            "type": {
+              "displayName": [],
+              "type": 28
+            }
+          }
+        ],
         "docs": [],
         "mutates": true,
         "name": [
-          "fetch_random"
+          "check_sr25519_bytes_sign"
         ],
         "payable": false,
         "returnType": {
           "displayName": [
-            "Result"
+            "bool"
           ],
-          "type": 30
+          "type": 29
         },
-        "selector": "0x03c9add5"
+        "selector": "0x762d82cb"
       },
       {
         "args": [
@@ -396,7 +304,7 @@
               "displayName": [
                 "PageParams"
               ],
-              "type": 32
+              "type": 30
             }
           }
         ],
@@ -410,7 +318,7 @@
           "displayName": [
             "PageResult"
           ],
-          "type": 33
+          "type": 31
         },
         "selector": "0x9fd68cb5"
       },
@@ -436,9 +344,41 @@
           "displayName": [
             "AgreementInfoDisplay"
           ],
-          "type": 34
+          "type": 32
         },
         "selector": "0xd57deacb"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "mutates": false,
+        "name": [
+          "owner"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "AccountId"
+          ],
+          "type": 1
+        },
+        "selector": "0xfeaea4fa"
+      },
+      {
+        "args": [],
+        "docs": [],
+        "mutates": false,
+        "name": [
+          "index"
+        ],
+        "payable": false,
+        "returnType": {
+          "displayName": [
+            "u64"
+          ],
+          "type": 4
+        },
+        "selector": "0x6a66d6c5"
       },
       {
         "args": [
@@ -457,7 +397,7 @@
               "displayName": [
                 "PageParams"
               ],
-              "type": 32
+              "type": 30
             }
           }
         ],
@@ -471,7 +411,7 @@
           "displayName": [
             "PageResult"
           ],
-          "type": 33
+          "type": 31
         },
         "selector": "0x6117ae13"
       }
@@ -1242,55 +1182,6 @@
     },
     {
       "def": {
-        "variant": {
-          "variants": [
-            {
-              "fields": [
-                {
-                  "type": 2,
-                  "typeName": "T"
-                }
-              ],
-              "name": "Ok"
-            },
-            {
-              "fields": [
-                {
-                  "type": 31,
-                  "typeName": "E"
-                }
-              ],
-              "name": "Err"
-            }
-          ]
-        }
-      },
-      "params": [
-        2,
-        31
-      ],
-      "path": [
-        "Result"
-      ]
-    },
-    {
-      "def": {
-        "variant": {
-          "variants": [
-            {
-              "discriminant": 0,
-              "name": "VerifyErr"
-            }
-          ]
-        }
-      },
-      "path": [
-        "polkasign",
-        "CryptoExtensionErr"
-      ]
-    },
-    {
-      "def": {
         "composite": {
           "fields": [
             {
@@ -1348,14 +1239,14 @@
             },
             {
               "name": "data",
-              "type": 36,
+              "type": 34,
               "typeName": "Vec<T>"
             }
           ]
         }
       },
       "params": [
-        34
+        32
       ],
       "path": [
         "page_helper",
@@ -1404,7 +1295,7 @@
             },
             {
               "name": "sign_infos",
-              "type": 35,
+              "type": 33,
               "typeName": "Vec<SignInfo>"
             },
             {
@@ -1431,7 +1322,7 @@
     {
       "def": {
         "sequence": {
-          "type": 34
+          "type": 32
         }
       }
     }
