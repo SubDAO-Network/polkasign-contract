@@ -12,12 +12,12 @@ overflow-checks = false
 overflow-checks = false
 
 [dependencies]
-ink_primitives = { version = "3.0.0-rc3", path = "../ink/crates/primitives", default-features = false }
-ink_metadata = { version = "3.0.0-rc3", path = "../ink/crates/metadata", default-features = false, features = ["derive"], optional = true }
-ink_env = { version = "3.0.0-rc3", path = "../ink/crates/env", default-features = false }
-ink_prelude = { version = "3.0.0-rc3", path = "../ink/crates/prelude", default-features = false }
-ink_storage = { version = "3.0.0-rc3", path = "../ink/crates/storage", default-features = false }
-ink_lang = { version = "3.0.0-rc3", path = "../ink/crates/lang", default-features = false }
+ink_primitives = { version = "3.0.0-rc3", path = "../ink_bak/crates/primitives", default-features = false }
+ink_metadata = { version = "3.0.0-rc3", path = "../ink_bak/crates/metadata", default-features = false, features = ["derive"], optional = true }
+ink_env = { version = "3.0.0-rc3", path = "../ink_bak/crates/env", default-features = false }
+ink_prelude = { version = "3.0.0-rc3", path = "../ink_bak/crates/prelude", default-features = false }
+ink_storage = { version = "3.0.0-rc3", path = "../ink_bak/crates/storage", default-features = false }
+ink_lang = { version = "3.0.0-rc3", path = "../ink_bak/crates/lang", default-features = false }
 
 page_helper = { version = "0.1.0", path = "../page_helper", default-features = false, features = ["ink-as-dependency"] }
 

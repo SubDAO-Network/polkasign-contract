@@ -67,7 +67,7 @@ mod polkasign {
 
     use page_helper::{PageParams, PageResult, cal_pages};
 
-    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
@@ -83,7 +83,7 @@ mod polkasign {
         url: String,
     }
 
-    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
@@ -94,7 +94,7 @@ mod polkasign {
         create_at: u64,
     }
 
-    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
@@ -115,7 +115,7 @@ mod polkasign {
         resources: BTreeMap<AccountId, Vec<StorageInfo>>,
     }
 
-    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
@@ -136,7 +136,7 @@ mod polkasign {
         resources: Vec<StorageInfo>,
     }
 
-    #[derive(scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
+    #[derive(Debug, scale::Encode, scale::Decode, Clone, SpreadLayout, PackedLayout)]
     #[cfg_attr(
     feature = "std",
     derive(scale_info::TypeInfo, ink_storage::traits::StorageLayout)
@@ -305,9 +305,6 @@ mod polkasign {
         pub fn _check_sr25519_bytes_sign(&self, public: [u8; 32], msg: [u8; 32], sign: [u8; 64]) -> bool {
             let mut tmp = [0; 47];
             let mut index = 0;
-            // Polkasign::append_bytes(&tmp, bytes_pre.as_ref());
-            // Polkasign::append_bytes(&tmp, msg.as_ref());
-            // Polkasign::append_bytes(&tmp, bytes_sub.as_ref());
             for ch in Polkasign::bytes_pre {
                 tmp[index.clone()] = ch as u8;
                 index += 1;
@@ -439,24 +436,125 @@ mod polkasign {
     mod tests {
         /// Imports all the definitions from the outer scope so we can use them here.
         use super::*;
+        use std::convert::TryFrom;
 
         /// Imports `ink_lang` so we can use `#[ink::test]`.
         use ink_lang as ink;
 
-        /// We test if the default constructor does its job.
         #[ink::test]
-        fn default_works() {
-            let polkasion = Polkasign::default();
-            assert_eq!(polkasion.get(), false);
+        fn new_works() {
+            let test_account :AccountId = [0u8; 32].into();
+            let polkasion = Polkasign::new(test_account);
+            assert_eq!(polkasion.index(), 0);
+            assert_eq!(polkasion.owner(), test_account);
         }
 
-        /// We test a simple use case of our contract.
         #[ink::test]
-        fn it_works() {
-            let mut polkasion = Polkasign::new(false);
-            assert_eq!(polkasion.get(), false);
-            polkasion.flip();
-            assert_eq!(polkasion.get(), true);
+        fn create_agreement_and_query_agreement_by_id() {
+            let test_account :AccountId = [0u8; 32].into();
+            let mut polkasion = Polkasign::new(test_account);
+            let params = CreateAgreementParams {
+                name: "test".to_string(),
+                signers: vec![[1u8; 32].into()],
+                agreement_file: StorageInfo {
+                    hash: [7u8; 32].into(),
+                    creator: [1u8; 32].into(),
+                    usage: "doc".to_string(),
+                    save_at: "ipfs".to_string(),
+                    url: "http://ipfs.io/xxxx".to_string()
+                }
+            };
+            let index = polkasion.create_agreement(params.clone());
+            assert_eq!(polkasion.index(), index + 1);
+            let res = polkasion.query_agreement_by_id(index);
+            assert_eq!(res.name, params.name);
+            assert_eq!(res.signers, params.signers);
+        }
+
+        #[ink::test]
+        fn create_agreement_and_query_agreement_by_creator() {
+            let test_account :AccountId = [0u8; 32].into();
+            let mut polkasion = Polkasign::new(test_account);
+            let params = CreateAgreementParams {
+                name: "test".to_string(),
+                signers: vec![[1u8; 32].into()],
+                agreement_file: StorageInfo {
+                    hash: [7u8; 32].into(),
+                    creator: [1u8; 32].into(),
+                    usage: "doc".to_string(),
+                    save_at: "ipfs".to_string(),
+                    url: "http://ipfs.io/xxxx".to_string()
+                }
+            };
+            let index = polkasion.create_agreement(params.clone());
+            assert_eq!(polkasion.index(), index + 1);
+            let res = polkasion.query_agreement_by_creator([1u8; 32].into(), PageParams{
+                page_index: 0,
+                page_size: 10,
+            });
+            assert_eq!(res.total, 1);
+            assert_eq!(res.data[0].name, params.name);
+            assert_eq!(res.data[0].signers, params.signers);
+        }
+
+        #[ink::test]
+        fn create_agreement_and_query_agreement_by_collaborator() {
+            let test_account :AccountId = [0u8; 32].into();
+            let mut polkasion = Polkasign::new(test_account);
+            let params = CreateAgreementParams {
+                name: "test".to_string(),
+                signers: vec![[1u8; 32].into(), [2u8; 32].into()],
+                agreement_file: StorageInfo {
+                    hash: [7u8; 32].into(),
+                    creator: [1u8; 32].into(),
+                    usage: "doc".to_string(),
+                    save_at: "ipfs".to_string(),
+                    url: "http://ipfs.io/xxxx".to_string()
+                }
+            };
+            let index = polkasion.create_agreement(params.clone());
+            assert_eq!(polkasion.index(), index + 1);
+            let res = polkasion.query_agreement_by_collaborator([2u8; 32].into(), PageParams{
+                page_index: 0,
+                page_size: 10,
+            });
+            assert_eq!(res.total, 1);
+            assert_eq!(res.data[0].name, params.name);
+            assert_eq!(res.data[0].signers, params.signers);
+        }
+
+        #[ink::test]
+        fn attach_resource_and_query_agreement_by_id() {
+            let test_account :AccountId = [0u8; 32].into();
+            let mut polkasion = Polkasign::new(test_account);
+            let params = CreateAgreementParams {
+                name: "test".to_string(),
+                signers: vec![[1u8; 32].into()],
+                agreement_file: StorageInfo {
+                    hash: [7u8; 32].into(),
+                    creator: [1u8; 32].into(),
+                    usage: "doc".to_string(),
+                    save_at: "ipfs".to_string(),
+                    url: "http://ipfs.io/xxxx".to_string()
+                }
+            };
+            let index = polkasion.create_agreement(params.clone());
+            assert_eq!(polkasion.index(), index + 1);
+
+            // attach resource
+            let info = StorageInfo {
+                hash: [2u8; 32].into(),
+                creator: [1u8; 32].into(),
+                usage: "comment".to_string(),
+                save_at: "ipfs".to_string(),
+                url: "https://ipfs.io/xxxx".to_string()
+            };
+            polkasion.attach_resource_to_agreement(index, info.clone());
+
+            let res = polkasion.query_agreement_by_id(index);
+            assert_eq!(res.name, params.name);
+            assert_eq!(res.signers, params.signers);
+            assert_eq!(res.resources[0].hash, info.hash);
         }
     }
 }

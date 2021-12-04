@@ -10,7 +10,10 @@ git clone --recursive https://github.com/Apron-Network/apron-contracts.git
 ```
 
 ## Compile 
-
+Please **use cargo-contract version 0.11**!
+```bash
+cargo install cargo-contract --vers ^0.11 --force --locked
+```
 Run `bash ./build.sh`
 
 or
@@ -20,3 +23,11 @@ Run
 cargo +nightly contract build
 ```
 in each contract folder
+
+
+## Test contract
+```bash
+cd polkasign
+cargo test
+```
+
