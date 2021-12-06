@@ -222,7 +222,7 @@ mod polkasign {
         }
 
         #[ink(message)]
-        pub fn create_agreement_with_sign(&mut self, params: CreateAgreementParams, sign: [u8; 64]) {
+        pub fn create_agreement_with_sign(&mut self, params: CreateAgreementParams, info: StorageInfo, sign: [u8; 64]) {
             let caller = self.env().caller();
             let time_at = self.env().block_timestamp();
             let index = self.create_agreement(params);
@@ -238,6 +238,8 @@ mod polkasign {
                 addr: caller,
                 create_at: time_at,
             });
+            let resources = a.resources.entry(caller.clone()).or_insert(Vec::new());
+            resources.push(info);
         }
 
         #[ink(message)]

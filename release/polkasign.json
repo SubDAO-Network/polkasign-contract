@@ -1,7 +1,7 @@
 {
   "metadataVersion": "0.1.0",
   "source": {
-    "hash": "0x3c98fe84fc91715e9c4e7f0b3cc393270ffb9e0b4d2888abe85c0d7f670aa6b6",
+    "hash": "0x601d2935c21c5ce5ec2f390805258736c0e5156bfc64ffd9b5a4fe00a6a0c0de",
     "language": "ink! 3.0.0-rc4",
     "compiler": "rustc 1.58.0-nightly"
   },
@@ -139,6 +139,15 @@
                 "CreateAgreementParams"
               ],
               "type": 27
+            }
+          },
+          {
+            "name": "info",
+            "type": {
+              "displayName": [
+                "StorageInfo"
+              ],
+              "type": 13
             }
           },
           {

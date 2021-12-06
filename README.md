@@ -14,7 +14,7 @@ Please **use cargo-contract version 0.11**!
 ```bash
 cargo install cargo-contract --vers ^0.11 --force --locked
 ```
-Run `bash ./build.sh`
+Run `bash ./build.sh`, you can find `.contract` file in `./release` dir.
 
 or
 
@@ -23,7 +23,6 @@ Run
 cargo +nightly contract build
 ```
 in each contract folder
-
 
 ## Test contract
 ```bash

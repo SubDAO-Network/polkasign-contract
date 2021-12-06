@@ -68,7 +68,7 @@ definition: pub fn create_agreement(&mut self, params: CreateAgreementParams) ->
 create agreement with sign.
 ```bash
 type: tx
-definition: pub fn create_agreement_with_sign(&mut self, params: CreateAgreementParams, sign: [u8; 64]);
+definition: pub fn create_agreement_with_sign(&mut self, params: CreateAgreementParams, info: StorageInfo, sign: [u8; 64]);
 ```
 
 ### attach resource to agreement
