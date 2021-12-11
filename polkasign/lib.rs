@@ -238,6 +238,11 @@ mod polkasign {
                 addr: caller,
                 create_at: time_at,
             });
+            // if sign enough, set finished
+            if a.sign_infos.len() >= a.signers.len() {
+                a.status = 2;
+            }
+
             let resources = a.resources.entry(caller.clone()).or_insert(Vec::new());
             resources.push(info);
         }
