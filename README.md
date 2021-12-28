@@ -6,7 +6,7 @@ reference [https://paritytech.github.io/ink-docs/getting-started/setup](https://
 ## Clone code
 Run
 ```
-git clone --recursive https://github.com/Apron-Network/apron-contracts.git
+git clone --recursive https://github.com/subdao-network/polkasign-contracts.git
 ```
 
 ## Compile 
